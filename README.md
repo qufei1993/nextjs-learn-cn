@@ -4,7 +4,7 @@ Next.js v14 版本发布时，除了正常的版本更新之外，还发布了�
 
 本系列是基于[官方教程](https://nextjs.org/learn)的一个中文翻译版本。在翻译、整理的过程中，每个章节对应的 Example 代码，笔者也都进行了测试，有问题的部分也进行了修改，参见 Github 项目 [nextjs-learn-example](https://github.com/qufei1993/nextjs-learn-example)。
 
-在线阅读地址：[https://qufei1993.github.io/nextjs-learn-cn](https://qufei1993.github.io/nextjs-learn-cn)
+在线阅读地址：[nextjs-learn-cn](https://nextjs-learn-5443q3cat-qufei1993.vercel.app/)
 
 以下是本课程中您将学到的功能：
 
