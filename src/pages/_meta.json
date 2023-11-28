@@ -1,0 +1,26 @@
+{
+  "index": {
+    "title": "Home",
+    "theme": {
+      "breadcrumb": false
+    },
+    "display": "hidden"
+  },
+  "chapter1": "Chapter 1：入门",
+  "chapter2": "Chapter 2：CSS 样式",
+  "chapter3": "Chapter 3：优化字体和图片",
+  "chapter4": "Chapter 4：创建 Layouts 和 Pages",
+  "chapter5": "Chapter 5：页面之间导航",
+  "chapter6": "Chapter 6：建立你的数据库",
+  "chapter7": "Chapter 7：获取数据",
+  "chapter8": "Chapter 8：静态和动态渲染",
+  "chapter9": "Chapter 9：流式传输",
+  "chapter10": "Chapter 10：部分预渲染（翻译中）",
+  "chapter11": "Chapter 11：添加搜索和分页（翻译中）",
+  "chapter12": "Chapter 12：Mutating 数据（翻译中）",
+  "chapter13": "Chapter 13：错误处理（翻译中）",
+  "chapter14": "Chapter 14：提高可访问性（翻译中）",
+  "chapter15": "Chapter 15：添加身份验证（翻译中）",
+  "chapter16": "Chapter 16：添加元数据（翻译中）",
+  "chapter17": "扩展篇 1：Vercel Postgres 搭配本地数据库"
+}
