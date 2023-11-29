@@ -1,4 +1,5 @@
 import { useRouter } from "next/router";
+import Image from 'next/image';
 
 const metaTags = (
   <>
@@ -13,7 +14,13 @@ const metaTags = (
 const ExtraContent = () => {
   return <>
     <div class="flex flex-col items-center">
-      <img src="/coding-may.jpeg" alt="Description" class="mb-4 rounded-md shadow-lg" />
+      <Image
+        src="/coding-may.jpeg"
+        className="mb-4 rounded-md shadow-lg"
+        alt="扫码备注 “nextjs” 加入 Next.js 中文技术交流群"
+        width={200}
+        height={200}
+      />
       <p class="nx-text-xs font-bold text-center">扫码备注 “nextjs”<br/>加入 Next.js 中文技术交流群</p>
     </div>
   </>

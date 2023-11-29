@@ -1,3 +1,5 @@
+import Image from 'next/image';
+
 # 欢迎来到 Learn Next.js 中文教程
 
 Next.js v14 版本发布时，除了正常的版本更新之外，还发布了一个基于 App Router 架构的免费学习教程，通过构建全栈 Web 应用程序，可以让您更好的了解 Next.js 的主要功能。
@@ -57,12 +59,24 @@ Next.js v14 版本发布时，除了正常的版本更新之外，还发布了�
 
 <>
   <div class="flex">
-    <div class="w-1/2 items-center">
-      <img src="/coding-may.jpeg" alt="Description" style={{ margin: '0 auto', marginBottom: 10, marginTop: 10 }} class="mb-5 rounded-md shadow-lg max-w-52 max-h-52 p-2" />
+    <div class="w-1/2 items-center flex flex-col">
+      <Image
+        src="/coding-may.jpeg"
+        className="mb-4 rounded-md shadow-lg mb-5 rounded-md shadow-lg p-2"
+        alt="扫码备注 “nextjs” 加入 Next.js 中文技术交流群"
+        width={200}
+        height={200}
+      />
       <p class="nx-text-xs font-bold text-center">扫码备注「**nextjs**」<br/>加入 Next.js 中文技术交流群</p>
     </div>
-    <div class="w-1/2">
-      <img src="/qrcode_for_coding_world.jpg" alt="Description" style={{ margin: '0 auto', marginBottom: 10, marginTop: 10 }} class="mb-5 rounded-md shadow-lg max-w-52 max-h-52" />
+    <div class="w-1/2 items-center flex flex-col">
+      <Image
+        src="/qrcode_for_coding_world.jpg"
+        className="mb-5 rounded-md shadow-lg"
+        alt="关注公众号编程界获取最新 Next.js 开发资讯"
+        width={200}
+        height={200}
+      />
       <p class="nx-text-xs font-bold text-center">关注公众号「**编程界**」<br/>获取最新 Next.js 开发资讯</p>
     </div>
   </div>

@@ -3,17 +3,7 @@ const withNextra = require("nextra")({
   themeConfig: "./theme.config.jsx",
 });
 
-let assetPrefix = ''
-let basePath = '/'
-const isGithubActions = process.env.GITHUB_ACTIONS || false
-if (isGithubActions) {
-  const repo = process.env.GITHUB_REPOSITORY.replace(/.*?\//, '');
-  assetPrefix = `/${repo}/`
-  basePath = `/${repo}`
-}
-console.log({ assetPrefix, basePath })
-
-module.exports = withNextra({
+const config = {
   images: {
     domains: ["github.com"],
   },
@@ -22,6 +12,13 @@ module.exports = withNextra({
     unoptimized: true,
   },
   reactStrictMode: true ,
-  assetPrefix,
-  basePath,
-});
+};
+
+const isGithubActions = process.env.GITHUB_ACTIONS || false;
+if (isGithubActions) {
+  const repo = process.env.GITHUB_REPOSITORY.replace(/.*?\//, '');
+  config.assetPrefix = `/${repo}/`
+  config.basePath = `/${repo}`
+}
+
+module.exports = withNextra();
