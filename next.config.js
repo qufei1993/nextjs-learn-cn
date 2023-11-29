@@ -4,11 +4,9 @@ const withNextra = require("nextra")({
 });
 
 const config = {
-  images: {
-    domains: ["github.com"],
-  },
   output: "export",
   images: {
+    domains: ["github.com"],
     unoptimized: true,
   },
   reactStrictMode: true ,
@@ -20,5 +18,6 @@ if (isGithubActions) {
   config.assetPrefix = `/${repo}/`
   config.basePath = `/${repo}`
 }
+console.log(config);
 
 module.exports = withNextra(config);

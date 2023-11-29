@@ -15,7 +15,7 @@ const ExtraContent = () => {
   return <>
     <div class="flex flex-col items-center">
       <Image
-        src="/coding-may.jpeg"
+        src="/coding-may.avif"
         className="mb-4 rounded-md shadow-lg"
         alt="扫码备注 “nextjs” 加入 Next.js 中文技术交流群"
         width={200}
