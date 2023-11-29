@@ -11,6 +11,7 @@ if (isGithubActions) {
   assetPrefix = `/${repo}/`
   basePath = `/${repo}`
 }
+console.log({ assetPrefix, basePath })
 
 module.exports = withNextra({
   images: {
@@ -20,6 +21,7 @@ module.exports = withNextra({
   images: {
     unoptimized: true,
   },
+  reactStrictMode: true ,
   assetPrefix,
   basePath,
 });
