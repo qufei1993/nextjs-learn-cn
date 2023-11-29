@@ -21,4 +21,4 @@ if (isGithubActions) {
   config.basePath = `/${repo}`
 }
 
-module.exports = withNextra();
+module.exports = withNextra(config);
