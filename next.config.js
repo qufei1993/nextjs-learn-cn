@@ -6,7 +6,6 @@ const withNextra = require("nextra")({
 const config = {
   output: "export",
   images: {
-    domains: ["github.com"],
     unoptimized: true,
   },
   reactStrictMode: true ,
