@@ -6,4 +6,4 @@ Next.js v14 版本发布时，除了正常的版本更新之外，还发布了�
 
 **在线阅读地址：**[https://qufei1993.github.io/nextjs-learn-cn/](https://qufei1993.github.io/nextjs-learn-cn/)
 
-![](/public/nextjs-learn-cn-home.png)
+[![](/public/nextjs-learn-cn-home.png)](https://qufei1993.github.io/nextjs-learn-cn/)
