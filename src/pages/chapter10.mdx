@@ -3,6 +3,80 @@ import QuizComponent from './quiz-component';
 
 # 部分预渲染（可选）
 
-```
-TODO：翻译整理中...
-```
+部分预渲染是在 Next.js 14 中引入的实验性功能。随着该功能在稳定性方面的进展，本页内容可能会进行更新。如果您不喜欢使用实验性功能，您可以跳过这一章节。完成课程不需要学习这一章节。
+
+以下是本章中将涵盖的主题：
+
+* 部分预渲染是什么。
+* 部分预渲染是如何工作的。
+
+## 结合静态和动态内容
+
+目前，如果您在路由内调用[动态函数](https://nextjs.org/docs/app/building-your-application/routing/route-handlers#dynamic-functions)（例如 `noStore()`、`cookies()` 等），整个路由将变为动态。
+
+这与今天大多数 Web 应用程序的构建方式相一致，您可以在整个**应用程序**或**特定路由**中选择静态或动态渲染。
+
+然而，大多数路由既不是完全静态也不是完全动态。您可能有一个既包含静态又包含动态内容的路由。例如，假设您有一个社交媒体动态，帖子可能是静态的，但帖子的点赞数是动态的。或者是电子商务网站，产品详情是静态的，但用户的购物车是动态的。
+
+回到您的 Dashboard 页面，您会考虑哪些组件是静态的，哪些是动态的？
+
+一旦准备好，点击下面的按钮，看看我们如何拆分仪表板路由：
+
+<details>
+  <summary>点击展开/折叠</summary>
+
+  ![](/chapter10-dashboard-static-dynamic-components.avif)
+
+  * The `<SideNav>` Component doesn't rely on data, and is not personalized to the user, so it can be static.
+  * The components in `<Page>` rely on data that changes often and will be personalized to the user, so they can be dynamic.
+</details>
+
+## 部分预渲染是什么？
+
+在 Next.js 14 中，有一个名为部分预渲染的新渲染模型的预览。部分预渲染是一项实验性功能，允许您在呈现具有静态加载外壳的路由的同时，保持一些部分是动态的。换句话说，您可以隔离路由的动态部分。例如：
+
+![部分预渲染的产品页面显示静态导航和产品信息，以及动态的购物车和推荐产品](/chapter10-thinking-in-ppr.avif)
+
+当用户访问一个路由时：
+
+* 提供一个静态路由外壳，这使得初始加载很快。
+* 外壳中留下动态内容将异步加载。
+* 异步洞在并行加载，减少页面的整体加载时间。
+
+这与您的应用程序今天的行为不同，其中整个路由要么完全是静态的，要么是动态的。
+
+部分预渲染将超快的静态边缘交付与完全动态的能力结合在一起，我们相信它[有可能成为Web 应用程序的默认渲染模型](https://vercel.com/blog/partial-prerendering-with-next-js-creating-a-new-default-rendering-model)，将静态站点生成和动态交付的优点融为一体。
+
+<QuizComponent
+  name="部分预渲染中的 “holes” 是什么？"
+  answers={[
+    "在禁用 JavaScript 的位置",
+    "在异步加载动态内容的位置",
+    "在加载第三方脚本的位置",
+    ]}
+  correctAnswer="在异步加载动态内容的位置"
+/>
+
+## 部分预渲染是如何工作的？
+
+部分预渲染利用 React 的 [Concurrent APIs](https://react.dev/blog/2021/12/17/react-conf-2021-recap#react-18-and-concurrent-features)，并使用 [Suspense](https://react.dev/reference/react/Suspense) 推迟渲染应用程序的某些部分，直到满足某些条件（例如加载数据）。
+
+fallback 被嵌入到初始静态文件中，以及其他静态内容。在构建时（或重新验证期间），路由的静态部分被预渲染，其余部分被推迟到用户请求路由时。
+
+值得注意的是，将组件包装在 Suspense 中并不会使组件本身变为动态的（请记住使用 unstable_noStore 来实现此行为），而是 Suspense 用作路由的静态和动态部分之间的边界。
+
+部分预渲染的好处在于，您无需更改代码即可使用它。只要使用 Suspense 包装路由的动态部分，Next.js 就会知道路由的哪些部分是静态的，哪些是动态的。
+
+> 注意：要了解有关如何配置部分预渲染的详细信息，请查阅[部分预渲染（实验性）文档](https://nextjs.org/docs/app/api-reference/next-config-js/partial-prerendering)或尝试使用[部分预渲染模板和演示](https://vercel.com/templates/next.js/partial-prerendering-nextjs)。重要的是要注意，该功能目前处于实验性阶段，尚未准备好用于生产部署。
+
+## 总结
+
+回顾一下，您已经采取了一些优化应用程序数据获取的步骤，您已经：
+* 在与应用程序代码相同的地区创建了一个数据库，以减少服务器和数据库之间的延迟。
+* 在服务器上使用 React 服务器组件获取数据。这允许您将昂贵的数据获取和逻辑保留在服务器上，减少客户端 JavaScript 捆绑，并防止数据库机密信息暴露给客户端。
+* 使用 SQL 仅获取所需的数据，减少每个请求传输的数据量和内存中转换数据所需的 JavaScript 量。
+* 在 JavaScript 中并行获取数据（在有意义的情况下）。
+* 实施了流式传输以防止慢速数据请求阻塞整个页面，并允许用户在等待所有内容加载完成之前开始与 UI 进行交互。
+* 将数据获取移动到需要它的组件，从而隔离了路由中应该是动态的部分，为部分预渲染做好准备。
+
+在下一章中，我们将研究在获取数据时您可能需要实现的两种常见模式：搜索和分页。

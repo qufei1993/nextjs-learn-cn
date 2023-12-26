@@ -40,7 +40,7 @@ const config = {
   sidebar: {
     toggleButton: true,
     titleComponent({ title, type }) {
-      if (['Chapter 10', 'Chapter 11', 'Chapter 12', 'Chapter 13', 'Chapter 14', 'Chapter 15', 'Chapter 16'].includes(title.split('：')[0])) {
+      if (['Chapter 11', 'Chapter 12', 'Chapter 13', 'Chapter 14', 'Chapter 15', 'Chapter 16'].includes(title.split('：')[0])) {
         return (
           <div style={{ color: '#d8d8d8', pointerEvents: 'none' }}>{title}</div>
         )
