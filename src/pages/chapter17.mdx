@@ -223,13 +223,19 @@ function isTemplateStringsArray(
 }
 ```
 
-修改 `/app/lib/data.ts` 文件。根据环境变量做区分，本地开发时使用本地的 postgres 数据库。
+创建 `/app/lib/sql-hack.ts` 文件。根据环境变量做区分，本地开发时使用本地的 postgres 数据库。
 
-```ts
+```ts copy
 import { sql as vercelSql } from '@vercel/postgres';
 import { sql as pgLocalSql } from './pg-local';
 
-const sql = process.env.LOCAL_VERCEL_POSTGRES ? pgLocalSql : vercelSql
+export const sql = process.env.LOCAL_VERCEL_POSTGRES ? pgLocalSql : vercelSql
 ```
 
-以上解决方案，可以解决教程示例中遇到的问题。如果选用 Next.js 做开发时，推荐关注一些 ORM 框架，例如 Prisma 还是很好用的，这不是这篇教程的重点，这里不会展开介绍。
+修改 `/app/lib/data.ts` 文件。
+
+```ts
+import { sql } from './sql-hack';
+```
+
+**请注意：以上是一个 hack 的解决方案，只适用解决本教程示例中遇到的问题。如果选用 Next.js 做开发时，推荐关注一些 ORM 框架，例如 Prisma 还是很好用的，这不是这篇教程的重点，这里不会展开介绍**。
