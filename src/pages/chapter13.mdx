@@ -3,6 +3,270 @@ import QuizComponent from './quiz-component';
 
 # 错误处理
 
+在上一章节中，您学到了如何使用 Server Actions 来改变数据。让我们看看如何使用 JavaScript 的 `try/catch` 语句和 Next.js API 优雅地处理错误。
+
+以下是本章中将涵盖的主题：
+
+* 如何使用特殊的 `error.tsx` 文件捕获路由段中的错误，并向用户显示一个备用 UI。
+* 如何使用 `notFound` 函数和 `not-found` 文件来处理 404 错误（对于不存在的资源）。
+
+## 为 Server Actions 添加 try/catch
+
+首先，让我们向您的 Server Actions 添加 JavaScript 的 `try/catch` 语句，以使您能够优雅地处理错误。
+
+如果您知道如何操作，请花费几分钟更新您的 Server Actions，或者您可以复制下面的代码：
+
+<details>
+  <summary>点击展开/折叠</summary>
+
+  ```tsx showLineNumbers filename="/app/lib/actions.ts" copy
+  export async function createInvoice(formData: FormData) {
+    const { customerId, amount, status } = CreateInvoice.parse({
+      customerId: formData.get('customerId'),
+      amount: formData.get('amount'),
+      status: formData.get('status'),
+    });
+  
+    const amountInCents = amount * 100;
+    const date = new Date().toISOString().split('T')[0];
+  
+    try {
+      await sql`
+        INSERT INTO invoices (customer_id, amount, status, date)
+        VALUES (${customerId}, ${amountInCents}, ${status}, ${date})
+      `;
+    } catch (error) {
+      return {
+        message: 'Database Error: Failed to Create Invoice.',
+      };
+    }
+  
+    revalidatePath('/dashboard/invoices');
+    redirect('/dashboard/invoices');
+  }
+  ```
+</details>
+
+<details>
+  <summary>点击展开/折叠</summary>
+
+  ```tsx showLineNumbers filename="/app/lib/actions.ts" copy
+  export async function updateInvoice(id: string, formData: FormData) {
+    const { customerId, amount, status } = UpdateInvoice.parse({
+      customerId: formData.get('customerId'),
+      amount: formData.get('amount'),
+      status: formData.get('status'),
+    });
+  
+    const amountInCents = amount * 100;
+  
+    try {
+      await sql`
+          UPDATE invoices
+          SET customer_id = ${customerId}, amount = ${amountInCents}, status = ${status}
+          WHERE id = ${id}
+        `;
+    } catch (error) {
+      return { message: 'Database Error: Failed to Update Invoice.' };
+    }
+  
+    revalidatePath('/dashboard/invoices');
+    redirect('/dashboard/invoices');
+  }
+  ```
+</details>
+
+<details>
+  <summary>点击展开/折叠</summary>
+
+  ```tsx showLineNumbers filename="/app/lib/actions.ts" copy
+  export async function deleteInvoice(id: string) {
+    try {
+      await sql`DELETE FROM invoices WHERE id = ${id}`;
+      revalidatePath('/dashboard/invoices');
+      return { message: 'Deleted Invoice.' };
+    } catch (error) {
+      return { message: 'Database Error: Failed to Delete Invoice.' };
+    }
+  }
+  ```
+</details>
+
+注意，`redirect` 是在 `try/catch` 块之外调用的。这是因为 `redirect` 的工作方式是通过抛出一个错误，该错误会被 `catch` 块捕获。为了避免这种情况，您可以在 `try/catch` 之后调用 `redirect`。`redirect` 只有在 `try` 成功的情况下才会被执行。
+
+现在，让我们看一下在 Server Action 中抛出错误时会发生什么。您可以更早的抛出一个错误。例如，在 `deleteInvoice` 操作中，在函数的最上面抛出一个错误：
+
+```tsx showLineNumbers filename="/app/lib/actions.ts" {2} copy
+export async function deleteInvoice(id: string) {
+  throw new Error('Failed to Delete Invoice');
+ 
+  // Unreachable code block
+  try {
+    await sql`DELETE FROM invoices WHERE id = ${id}`;
+    revalidatePath('/dashboard/invoices');
+    return { message: 'Deleted Invoice' };
+  } catch (error) {
+    return { message: 'Database Error: Failed to Delete Invoice' };
+  }
+}
 ```
-TODO：翻译整理中...
+
+当您尝试删除发票时，您应该在本机上看到一个错误。
+
+在开发过程中看到这些错误非常有帮助，因为它可以让您尽早捕获任何潜在的问题。然而，您还希望向用户显示错误，以避免突然的故障并允许您的应用程序继续运行。
+
+这就是 Next.js 的 [error.tsx](https://nextjs.org/docs/app/api-reference/file-conventions/error) 文件发挥作用的地方。
+
+## 使用 `error.tsx` 处理全局错误
+
+`error.tsx` 文件可用于为路由段定义 UI 边界。它用作意外错误的综合处理并允许您向用户显示备用 UI。
+
+在您的 `/dashboard/invoices` 文件夹内，创建一个名为 `error.tsx` 的新文件并粘贴以下代码：
+
+```tsx showLineNumbers filename="/dashboard/invoices/error.tsx" copy
+'use client';
+ 
+import { useEffect } from 'react';
+ 
+export default function Error({
+  error,
+  reset,
+}: {
+  error: Error & { digest?: string };
+  reset: () => void;
+}) {
+  useEffect(() => {
+    // Optionally log the error to an error reporting service
+    console.error(error);
+  }, [error]);
+ 
+  return (
+    <main className="flex h-full flex-col items-center justify-center">
+      <h2 className="text-center">Something went wrong!</h2>
+      <button
+        className="mt-4 rounded-md bg-blue-500 px-4 py-2 text-sm text-white transition-colors hover:bg-blue-400"
+        onClick={
+          // Attempt to recover by trying to re-render the invoices route
+          () => reset()
+        }
+      >
+        Try again
+      </button>
+    </main>
+  );
+}
 ```
+
+以上面代码有几个要点你需要注意：
+* **`"use client"`** - `error.tsx` 需要是一个客户端组件（Client Component）。
+* 它接受两个参数：
+  * `error`：这个对象是 JavaScript 原生 [Error](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Error) 对象的一个实例。
+  * `reset`：这是一个重置错误边界的函数。当执行时，该函数将尝试重新渲染路由段。
+
+当您再次尝试删除发票时，应该会看到以下 UI：
+
+![](/chapter13-error-page.avif)
+
+## 使用 `notFound` 函数处理 404 错误
+
+另一种优雅处理错误的方式是使用 `notFound` 函数。虽然 `error.tsx` 对于捕获全局错误很有用，但在尝试获取不存在的资源时，可以使用 `notFound`。
+
+例如，访问 http://localhost:3000/dashboard/invoices/2e94d1ed-d220-449f-9f11-f0bbceed9645/edit。
+
+这是一个不存在于您的数据库中的虚假 UUID。
+
+您将立即看到 `error.tsx` 启动，因为这是 `/invoices` 的子路由，其中定义了 `error.tsx`。
+
+然而，如果您想更具体，可以显示一个 404 错误，告诉用户他们尝试访问的资源未被找到。
+
+您可以通过进入 `data.ts` 中的 `fetchInvoiceById` 函数，并在控制台记录返回的发票来确认资源不存在：
+
+```tsx showLineNumbers filename="/app/lib/data.ts" {6} copy
+export async function fetchInvoiceById(id: string) {
+  noStore();
+  try {
+    // ...
+ 
+    console.log(invoice); // Invoice is an empty array []
+    return invoice[0];
+  } catch (error) {
+    console.error('Database Error:', error);
+    throw new Error('Failed to fetch invoice.');
+  }
+}
+```
+
+现在您知道发票在数据库中不存在，让我们使用 `notFound` 来处理它。导航到 `/dashboard/invoices/[id]/edit/page.tsx`，并从 `'next/navigation'` 导入 `{ notFound }`。
+
+然后，您可以使用条件语句在发票不存在时调用 `notFound`：
+
+```tsx showLineNumbers filename="/dashboard/invoices/[id]/edit/page.tsx" {3,12-14} copy
+import { fetchInvoiceById, fetchCustomers } from '@/app/lib/data';
+import { updateInvoice } from '@/app/lib/actions';
+import { notFound } from 'next/navigation';
+ 
+export default async function Page({ params }: { params: { id: string } }) {
+  const id = params.id;
+  const [invoice, customers] = await Promise.all([
+    fetchInvoiceById(id),
+    fetchCustomers(),
+  ]);
+ 
+  if (!invoice) {
+    notFound();
+  }
+ 
+  // ...
+}
+```
+
+完美！如果找不到特定的发票，`<Page>` 现在会抛出一个错误。为了向用户显示错误 UI，请在 `/edit` 文件夹内创建一个 `not-found.tsx` 文件。
+
+然后，在 `not-found.tsx` 文件中，粘贴以下代码：
+
+```tsx showLineNumbers filename="/dashboard/invoices/[id]/edit/not-found.tsx" copy
+import Link from 'next/link';
+import { FaceFrownIcon } from '@heroicons/react/24/outline';
+ 
+export default function NotFound() {
+  return (
+    <main className="flex h-full flex-col items-center justify-center gap-2">
+      <FaceFrownIcon className="w-10 text-gray-400" />
+      <h2 className="text-xl font-semibold">404 Not Found</h2>
+      <p>Could not find the requested invoice.</p>
+      <Link
+        href="/dashboard/invoices"
+        className="mt-4 rounded-md bg-blue-500 px-4 py-2 text-sm text-white transition-colors hover:bg-blue-400"
+      >
+        Go Back
+      </Link>
+    </main>
+  );
+}
+```
+
+刷新路由，现在您应该看到以下 UI：
+
+![](/chapter13-404-not-found-page.avif)
+
+这是要记住的事情，`notFound` 会优先于 `error.tsx`，因此当您想处理更具体的错误时，可以使用它！
+
+<QuizComponent
+  name="在 Next.js 中，哪个文件用作路由段错误的全局捕获"
+  answers={[
+    "404.tsx",
+    "not-found.tsx",
+    "error.tsx",
+    "catch-all.tsx"
+    ]}
+  correctAnswer="error.tsx"
+/>
+
+## 进一步阅读
+
+要了解有关在 Next.js 中处理错误的更多信息，请查看以下文档：
+
+* [错误处理](https://nextjs.org/docs/app/building-your-application/routing/error-handling)
+* [error.js API 参考](https://nextjs.org/docs/app/api-reference/file-conventions/error)
+* [notFound() API 参考](https://nextjs.org/docs/app/api-reference/functions/not-found)
+* [not-found.js API 参考](https://nextjs.org/docs/app/api-reference/file-conventions/not-found)
