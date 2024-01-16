@@ -79,7 +79,7 @@ Server Actions 与 Next.js [缓存](https://nextjs.org/docs/app/building-your-ap
 
 您将使用此路由来创建新的发票。在您的 `page.tsx` 文件中，粘贴以下代码，然后花些时间研究它：
 
-```ts showLineNumbers filename="/dashboard/invoices/create/page.tsx" copy
+```tsx showLineNumbers filename="/dashboard/invoices/create/page.tsx" copy
 import Form from '@/app/ui/invoices/create-form';
 import Breadcrumbs from '@/app/ui/invoices/breadcrumbs';
 import { fetchCustomers } from '@/app/lib/data';
@@ -455,7 +455,7 @@ export function UpdateInvoice({ id }: { id: string }) {
 
 回到您的 `<Page>` 组件，粘贴以下代码：
 
-```ts showLineNumbers filename="/app/dashboard/invoices/[id]/edit/page.tsx" copy
+```tsx showLineNumbers filename="/app/dashboard/invoices/[id]/edit/page.tsx" copy
 import Form from '@/app/ui/invoices/edit-form';
 import Breadcrumbs from '@/app/ui/invoices/breadcrumbs';
 import { fetchCustomers } from '@/app/lib/data';
