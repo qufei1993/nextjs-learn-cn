@@ -95,8 +95,8 @@ exports.getClient = async () => {
       if (!strings) {
          throw new ('sql is required')
       }
-      const [query, params] = sqlTemplate(strings, values)
-      const res = await client.query(query, params[0]);
+      const [query, params] = sqlTemplate(strings, ...values)
+      const res = await client.query(query, params);
       return res;
    }
 
@@ -189,7 +189,7 @@ export async function sql<O extends QueryResultRow>(
   const [query, params] = sqlTemplate(strings, ...values);
 
   // @ts-ignore
-  const res = await pool.query(query, params[0]);
+  const res = await pool.query(query, params);
 
   // @ts-ignore
   return res as unknown as Promise<QueryResult<O>>;
