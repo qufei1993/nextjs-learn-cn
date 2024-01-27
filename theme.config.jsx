@@ -6,8 +6,12 @@ const metaTags = (
     <link rel="icon" type="image/x-icon" href="/favicon.ico" />
     <meta
       name="description"
-      content="Learn Next.js 中文教程"
+      content="基于 App Router 架构的免费学习教程，通过构建全栈 Web 应用程序，让您更好的了解 Next.js 主要功能"
     />
+    <meta name="keywords" content="Next.js, Next.js 教程, 如何学习 Next.js, React Server Component, React Server Actions" />
+    <meta property="og:title" content="Learn Next.js 中文教程" />
+    <meta property="og:description" content="基于 App Router 架构的免费学习教程，通过构建全栈 Web 应用程序，让您更好的了解 Next.js 主要功能" />
+    <meta property="og:image" content="/chapter0-dashboard.avif" />
   </>
 );
 
