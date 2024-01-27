@@ -1,8 +1,159 @@
 
 import QuizComponent from './quiz-component';
 
-# 添加元数据
+# 添加元数据（Metadata）
 
+元数据对于 SEO 和可共享性至关重要。在本章中，我们将讨论如何向你的 Next.js 应用程序添加元数据。
+
+以下是本章中将涵盖的主题：
+
+* 什么是元数据。
+* 元数据的类型。
+* 如何使用元数据添加 Open Graph 图像。
+* 如何使用元数据添加 favicon。
+
+## 什么是元数据？
+
+在 Web 开发中，元数据提供有关网页的其他详细信息。元数据对于访问页面的用户来说是不可见的。相反，它在幕后工作，嵌入在页面的 HTML 中，通常位于 `<head>` 元素内。这些隐藏的信息对于搜索引擎和其他需要更好了解你的网页内容的系统非常重要。
+
+## 为什么元数据很重要？
+
+元数据在增强网页的 SEO 方面起着重要作用，使其对搜索引擎和社交媒体平台更易访问和理解。正确的元数据有助于搜索引擎有效地索引网页，提高其在搜索结果中的排名。此外，像 Open Graph 这样的元数据提高了应用在社交媒体上的外观，使其更具吸引力。
+
+## 元数据类型
+
+有各种各样的元数据类型，每种都具有独特的目的。一些常见的类型包括：
+
+**标题元数据（Title Metadata）**：负责显示在浏览器标签上的网页标题。对于 SEO 来说非常关键，因为它帮助搜索引擎了解网页的主题。
+
+```tsx copy
+<title>Page Title</title>
 ```
-TODO：翻译整理中...
+
+**描述元数据（Description Metadata）**：提供对网页内容的简要概述，通常显示在搜索引擎结果中。
+
+```tsx copy
+<meta name="description" content="A brief description of the page content." />
 ```
+
+**关键字元数据（Keyword Metadata）**：包括与网页内容相关的关键字，帮助搜索引擎索引页面。
+
+```tsx copy
+<meta name="keywords" content="keyword1, keyword2, keyword3" />
+```
+
+**Open Graph 元数据（Open Graph Metadata）**：当在社交媒体平台上分享时，此元数据增强了网页的表示，提供标题、描述和预览图像等信息。
+
+```tsx copy
+<meta property="og:title" content="Title Here" />
+<meta property="og:description" content="Description Here" />
+<meta property="og:image" content="image_url_here" />
+```
+
+**Favicon 元数据（Favicon Metadata）**：将网页的图标（小图标）链接到网页，显示在浏览器的地址栏或标签中。
+
+```tsx copy
+<link rel="icon" href="path/to/favicon.ico" />
+```
+
+## 添加元数据
+
+Next.js 提供了一个 Metadata API，可用于定义应用程序的元数据。有两种方法可以向应用程序添加元数据：
+
+* **基于配置**：在 `layout.js` 或 `page.js` 文件中导出一个[静态的 metadata 对象](https://nextjs.org/docs/app/api-reference/functions/generate-metadata#metadata-object)或一个[动态的 generateMetadata 函数](https://nextjs.org/docs/app/api-reference/functions/generate-metadata#generatemetadata-function)。
+* **基于文件**：Next.js 有一系列专门用于元数据目的的特殊文件：
+  * `favicon.ico`、`apple-icon.jpg` 和 `icon.jpg`：用于 favicon 和图标
+  * `opengraph-image.jpg` 和 `twitter-image.jpg`：用于社交媒体图片
+  * `robots.txt`：提供搜索引擎爬取的指令
+  * `sitemap.xml`：提供有关网站结构的信息
+
+您可以灵活使用这些文件进行静态元数据，或者可以在项目中以编程方式生成它们。
+
+使用这两种选项，Next.js 将自动为您的页面生成相关的 `<head>` 元素。
+
+### Favicon 和 Open Graph 图像
+
+在 `/public` 文件夹中，您会注意到有两个图像：`favicon.ico` 和 `opengraph-image.jpg`。
+
+将这些图像移动到 `/app` 文件夹的根目录。
+
+这样做后，Next.js 将自动识别并使用这些文件作为您的 favicon 和 OG 图像。您可以通过在 dev 工具中检查应用程序的 `<head>` 元素来验证这一点。
+
+**需要注意的是**：您还可以使用 `ImageResponse` 构造函数创建动态 OG 图像。
+
+### 页面标题和描述
+
+您还可以从任何 `layout.js` 或 `page.js` 文件中包含一个 [metadata](https://nextjs.org/docs/app/api-reference/functions/generate-metadata#metadata-fields) 对象，以添加额外的页面信息，如标题和描述。在 layout.js 中的任何元数据都将被使用它的所有页面继承。
+
+在根布局中，创建一个新的 metadata 对象，具有以下字段：
+
+```tsx showLineNumbers filename="/app/layout.tsx" {1,3-7} copy
+import { Metadata } from 'next';
+
+export const metadata: Metadata = {
+  title: 'Acme Dashboard',
+  description: 'The official Next.js Course Dashboard, built with App Router.',
+  metadataBase: new URL('https://next-learn-dashboard.vercel.sh'),
+};
+
+export default function RootLayout() {
+  // ...
+}
+```
+
+Next.js 将自动将标题和元数据添加到您的应用程序。
+
+但是，如果您想为特定页面添加自定义标题怎么办？您可以通过向页面本身添加 `metadata` 对象来实现这一点。嵌套页面中的元数据将覆盖父级中的元数据。
+
+例如，在 `/dashboard/invoices` 页面中，您可以更新页面标题：
+
+```tsx showLineNumbers filename="/app/dashboard/invoices/page.tsx" {1,3-5} copy
+import { Metadata } from 'next';
+
+export const metadata: Metadata = {
+  title: 'Invoices | Acme Dashboard',
+};
+```
+
+这样做是有效的，但我们在每个页面上都重复了应用程序的标题。如果发生更改，例如公司名称，您将不得不在每个页面上进行更新。
+
+相反，您可以使用 metadata 对象中的 title.template 字段来为页面标题定义模板。此模板可以包含页面标题以及其他您想包含的信息。
+
+在根布局中，更新 metadata 对象以包含一个模板：
+
+```tsx showLineNumbers filename="/app/layout.tsx" {1,3-10} copy
+import { Metadata } from 'next';
+
+export const metadata: Metadata = {
+  title: {
+    template: '%s | Acme Dashboard',
+    default: 'Acme Dashboard',
+  },
+  description: 'The official Next.js Learn Dashboard built with App Router.',
+  metadataBase: new URL('https://next-learn-dashboard.vercel.sh'),
+};
+```
+
+模板中的 `%s` 将替换为特定的页面标题。
+
+现在，在 `/dashboard/invoices` 页面中，您可以添加页面标题：
+
+```tsx showLineNumbers filename="/app/dashboard/invoices/page.tsx" copy
+export const metadata: Metadata = {
+  title: 'Invoices',
+};
+```
+
+转到 `/dashboard/invoices` 页面并检查 `<head>` 元素。您应该看到页面标题现在是 `Invoices` | `Acme Dashboard`。
+
+## 练习：添加元数据
+
+现在您已经了解了元数据，通过为其他页面添加标题进行练习：
+
+1. `/login page.`
+2. `/dashboard/ page.`
+3. `/dashboard/customers page.`
+4. `/dashboard/invoices/create page.`
+5. `/dashboard/invoices/[id]/edit page.`
+
+Next.js 的 Metadata API 功能强大且灵活，使您可以完全掌控应用程序的元数据。在这里，我们向您展示了如何添加一些基本的元数据，但您可以添加多个字段，包括 `keywords`、`robots`、`canonical` 等。请随意查阅[文档](https://nextjs.org/docs/app/api-reference/functions/generate-metadata)，并向您的应用程序添加任何额外的元数据。
