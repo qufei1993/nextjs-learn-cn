@@ -1,5 +1,7 @@
 import { useRouter } from "next/router";
 import Image from 'next/image';
+import codingMayImage from 'public/coding-may.jpg';
+import qrcodeImage from 'public/qrcode_for_coding_world.avif';
 
 const metaTags = (
   <>
@@ -19,7 +21,7 @@ const ExtraContent = () => {
   return <>
     <div class="flex flex-col items-center">
       <Image
-        src="coding-may.jpg"
+        src={codingMayImage}
         className="mb-4 rounded-md shadow-lg"
         alt="扫码备注 “nextjs” 加入 Next.js 中文技术交流群"
         width={200}
@@ -30,7 +32,7 @@ const ExtraContent = () => {
       <div class="h-5"></div>
 
       <Image
-        src="qrcode_for_coding_world.avif"
+        src={qrcodeImage}
         className="mb-4 rounded-md shadow-lg"
         alt="扫码备注 “nextjs” 加入 Next.js 中文技术交流群"
         width={200}

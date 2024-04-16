@@ -16,10 +16,6 @@ if (isGithubActions) {
   const repo = process.env.GITHUB_REPOSITORY.replace(/.*?\//, '');
   config.assetPrefix = `/${repo}/`
   config.basePath = `/${repo}`
-  config.images = {
-    loader: 'custom',
-    loaderFile: 'image-prefix-loader.js',
-  };
 }
 console.log(config);
 

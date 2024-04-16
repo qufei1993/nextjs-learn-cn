@@ -1,4 +1,6 @@
 import Image from 'next/image';
+import codingMayImage from 'public/coding-may.jpg';
+import qrcodeImage from 'public/qrcode_for_coding_world.avif';
 
 export default function FollowMe() {
   return <>
@@ -12,7 +14,7 @@ export default function FollowMe() {
     <div class="flex mt-5">
       <div class="w-1/2 items-center flex flex-col pr-2">
         <Image
-          src="coding-may.jpg"
+          src={codingMayImage}
           className="mb-4 rounded-md shadow-lg mb-5 rounded-md shadow-lg"
           alt="扫码备注 “nextjs” 加入 Next.js 中文技术交流群"
           width={200}
@@ -22,7 +24,7 @@ export default function FollowMe() {
       </div>
       <div class="w-1/2 items-center flex flex-col pl-2">
         <Image
-          src="qrcode_for_coding_world.avif"
+          src={qrcodeImage}
           className="mb-5 rounded-md shadow-lg"
           alt="关注公众号编程界获取最新 Next.js 开发资讯"
           width={200}
