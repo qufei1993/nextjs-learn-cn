@@ -1,10 +1,9 @@
 {
   "index": {
-    "title": "Home",
+    "title": "介绍",
     "theme": {
       "breadcrumb": false
-    },
-    "display": "hidden"
+    }
   },
   "chapter1": "Chapter 1：入门",
   "chapter2": "Chapter 2：CSS 样式",

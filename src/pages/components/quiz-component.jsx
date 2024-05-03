@@ -1,3 +1,4 @@
+import crypto from 'crypto';
 import React, { useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faQuestionCircle } from '@fortawesome/free-solid-svg-icons';
@@ -15,6 +16,7 @@ const QuizComponent = ({ name, answers = [], correctAnswer }) => {
   const [selectedAnswer, setSelectedAnswer] = useState('');
   const [answerIndex, setAnswerIndex] = useState(-1);
   const [result, setResult] = useState('');
+  const hashCode = generateMD5(name);
 
   const handleAnswerChange = (event, index) => {
     setResult('');
@@ -46,12 +48,12 @@ const QuizComponent = ({ name, answers = [], correctAnswer }) => {
               value={answer}
               checked={selectedAnswer === answer}
               onChange={(e) => handleAnswerChange(e, index)}
-              id={index}
-              name="push-notifications"
+              id={`${hashCode}-${index}`}
+              name={name}
               type="radio"
               class="h-4 w-4 border-gray-300 text-indigo-600 focus:ring-indigo-600"
             />
-            <label for={index} class="block text-sm font-medium leading-6">{AnswerSequence[index]}：{answer}</label>
+            <label htmlFor={`${hashCode}-${index}`} class="block text-sm font-medium leading-6">{AnswerSequence[index]}：{answer}</label>
           </div>)
         }
       </div>
@@ -68,5 +70,9 @@ const QuizComponent = ({ name, answers = [], correctAnswer }) => {
     </div>
   );
 };
+
+function generateMD5(input) {
+  return crypto.createHash('md5').update(input).digest('hex');
+}
 
 export default QuizComponent;
