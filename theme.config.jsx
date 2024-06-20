@@ -6,6 +6,7 @@ import qrcodeImage from 'public/qrcode_for_coding_world.avif';
 const metaTags = (
   <>
     <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+    <link rel="icon" type="image/x-icon" href="/nextjs-learn-cn/favicon.ico" />
     <meta
       name="description"
       content="基于 App Router 架构的免费学习教程，通过构建全栈 Web 应用程序，让您更好的了解 Next.js 主要功能"
