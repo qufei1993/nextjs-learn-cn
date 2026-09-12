@@ -59,7 +59,6 @@ const config = {
   },
   toc: {
     backToTop: true,
-    extraContent: <ExtraContent />,
   },
   feedback: { content: null },
   useNextSeoProps() {
